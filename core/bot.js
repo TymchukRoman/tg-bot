@@ -1,0 +1,31 @@
+const { Telegraf } = require('telegraf');
+const commands = require('./commandsRouter.js');
+
+const bot = new Telegraf(process.env.BOT_TOKEN);
+bot.start((ctx) => ctx.reply('Welcome'))
+
+bot.command('ping', (ctx) => {
+    commands.ping(ctx);
+});
+
+bot.command('report', (ctx) => {
+    commands.report(ctx);
+})
+
+bot.command('get', (ctx) => {
+    commands.report(ctx);
+})
+
+bot.on('sticker', (ctx) => ctx.reply('👍'));
+bot.hears('hi', (ctx) => ctx.reply('Hey there'));
+bot.on('callback_query', (ctx) => {
+    ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
+    ctx.answerCbQuery();
+});
+bot.on('text', (ctx) => {
+    console.log(ctx.update.message.text);
+    ctx.reply(`Your msg: ${ctx.update.message.text}`);
+});
+
+
+module.exports = bot;
