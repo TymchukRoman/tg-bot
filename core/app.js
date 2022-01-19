@@ -5,6 +5,10 @@ class app {
     }
 
     start() {
+        this.bot.catch((err, ctx) => {
+            console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)
+        })
+
         this.bot.launch().then(() => {
             console.log("Bot started");
         });

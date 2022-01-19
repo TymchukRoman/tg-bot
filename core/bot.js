@@ -13,30 +13,23 @@ bot.start((ctx) => {
         first_name: ctx.update.message.from.first_name,
         last_name: ctx.update.message.from.last_name,
     });
-})
+});
 
 bot.command('ping', (ctx) => {
     commands.ping(ctx);
 });
 
-bot.command('report', (ctx) => {
-    commands.report(ctx);
-})
-
-bot.command('get', (ctx) => {
-    commands.report(ctx);
-})
-
-bot.on('sticker', (ctx) => ctx.reply('👍'));
-bot.hears('hi', (ctx) => ctx.reply('Hey there'));
-bot.on('callback_query', (ctx) => {
-    ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
-    ctx.answerCbQuery();
+bot.command('test', async (ctx) => {
+    try{
+        await ctx.replyWithChatAction("Where", ["Here", "There", "Then", "Jump"] );
+    } catch(err){
+        console.log(err);
+    }
 });
+
 bot.on('text', (ctx) => {
     console.log(ctx.update.message.text);
     ctx.reply(`Your msg: ${ctx.update.message.text}`);
 });
-
 
 module.exports = bot;
