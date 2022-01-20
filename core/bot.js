@@ -19,12 +19,8 @@ bot.command('ping', (ctx) => {
     commands.ping(ctx);
 });
 
-bot.command('test', async (ctx) => {
-    try{
-        await ctx.replyWithChatAction("Where", ["Here", "There", "Then", "Jump"] );
-    } catch(err){
-        console.log(err);
-    }
+bot.command('reminder', async (ctx) => {
+    commands.reminder(ctx);
 });
 
 bot.on('text', (ctx) => {

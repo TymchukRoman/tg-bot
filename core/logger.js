@@ -1,5 +1,5 @@
 const moment = require('moment');
-const Log = require('../models/logs');
+const Log = require('../models/log');
 
 class logger {
     static async log(msg, user) {
