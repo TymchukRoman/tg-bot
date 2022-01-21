@@ -1,3 +1,5 @@
+const cron = require('node-cron');
+const reminderGun = require('./reminderGun');
 class app {
     constructor(timestamp, bot) {
         this.timestamp = timestamp;
@@ -12,6 +14,13 @@ class app {
         this.bot.launch().then(() => {
             console.log("Bot started");
         });
+    }
+
+    createTask() {
+        this.task = cron.schedule('* * * * *', () => {
+            reminderGun(this.bot);
+        });
+        console.log("Task created");
     }
 }
 

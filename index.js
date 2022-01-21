@@ -19,6 +19,7 @@ const bot = require('./core/bot.js');
 
 const app = new appCreator(moment(), bot);
 app.start();
+app.createTask();
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));

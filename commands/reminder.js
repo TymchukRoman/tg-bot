@@ -5,7 +5,7 @@ const calculateTime = (hours, minutes) => {
     return moment().add(hours, 'hours').add(minutes, 'minutes');;
 }
 
-module.exports = (ctx) => {
+module.exports = async (ctx) => {
     try {
         const reminderTime = ctx.update.message.text.split("reminder ")[1];
         if (!reminderTime) {
@@ -38,8 +38,12 @@ module.exports = (ctx) => {
             const chatType = ctx.update.message.chat.type;
             const chatId = ctx.update.message.chat.id;
             const userId = ctx.update.message.from.id;
-            DB.createReminder(userId, chatId, firesTime, chatType);
-            ctx.replyWithMarkdown(`You want to set reminder after ${hours} hours, ${minutes} minutes. Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
+            const response = await DB.createReminder(userId, chatId, firesTime, chatType);
+            if (response) {
+                ctx.replyWithMarkdown(`You want to set reminder after ${hours} hours, ${minutes} minutes. Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
+            } else {
+                ctx.reply("There is some errors occured when creating a reminder...");
+            }
             return true;
         }
         ctx.reply(`${reminderTime} did not match any time pattern`);
