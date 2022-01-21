@@ -12,6 +12,14 @@ const logSchema = new mongoose.Schema({
     user: {
         type: Object,
         required: true,
+    },
+    type: {
+        type: String,
+        required: true,
+    },
+    data: {
+        type: Object,
+        required: true,
     }
 }, { collection: 'logs' })
 

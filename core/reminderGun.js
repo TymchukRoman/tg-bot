@@ -1,6 +1,7 @@
 const moment = require('moment');
 const DB = require('./database');
 const fire = require('./fireReminder');
+const logger = require('./logger');
 
 module.exports = async (bot) => {
     try {
@@ -10,14 +11,12 @@ module.exports = async (bot) => {
             return true;
         }
         activeReminders.forEach(activeReminder => {
-            if (moment(localTime).isSameOrAfter(moment(activeReminder.firesTime, "ddd MMM DD YYYY hh:mm:ss ZZ"))) {
+            if (moment(localTime).isSameOrAfter(moment(activeReminder.firesTime, "ddd MMM DD YYYY hh:mm:ss a ZZ"))) {
                 fire(bot, activeReminder._id);
-            } else {
-                console.log(`${activeReminder._id} too early to fire`);
             }
         });
         return true;
-    } catch (e) {
-        return console.log(String(e).substring(0, 25));
+    } catch (err) {
+        logger.log('Issue when checking reminders', 'system', 'ERR', err);
     }
 }

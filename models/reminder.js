@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 
 const reminderSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+    },
+    type: {
+        type: String,
+        required: true,
+    },
+    userInput: {
+        type: String,
+        required: true,
+    },
     userID: {
         type: String,
         required: true,

@@ -1,5 +1,6 @@
 const moment = require('moment');
 const DB = require('../core/database');
+const logger = require('../core/logger');
 
 const calculateTime = (hours, minutes) => {
     return moment().add(hours, 'hours').add(minutes, 'minutes');;
@@ -38,7 +39,8 @@ module.exports = async (ctx) => {
             const chatType = ctx.update.message.chat.type;
             const chatId = ctx.update.message.chat.id;
             const userId = ctx.update.message.from.id;
-            const response = await DB.createReminder(userId, chatId, firesTime, chatType);
+            const username = ctx.update.message.from.username;
+            const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, "time limit");
             if (response) {
                 ctx.replyWithMarkdown(`You want to set reminder after ${hours} hours, ${minutes} minutes. Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
             } else {
@@ -47,7 +49,7 @@ module.exports = async (ctx) => {
             return true;
         }
         ctx.reply(`${reminderTime} did not match any time pattern`);
-    } catch (e) {
-        console.log(e)
+    } catch (err) {
+        logger.log('Cannot create reminder', 'system', 'ERR', err);
     }
 } 

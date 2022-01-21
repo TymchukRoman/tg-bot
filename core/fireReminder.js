@@ -6,5 +6,5 @@ module.exports = async (bot, reminderId) => {
     const reminder = await DB.getReminder(reminderId);
     bot.telegram.sendMessage(reminder.chatID, "You reminder is here!");
     DB.fireReminder(reminderId);
-    console.log(reminder.firesTime);
+    return true;
 }
