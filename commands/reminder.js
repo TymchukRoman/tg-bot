@@ -3,6 +3,7 @@ const DB = require('../core/database');
 const logger = require('../core/logger');
 const lParser = require('./parsers/limitParser');
 const eParser = require('./parsers/exactParser');
+const mParser = require('./parsers/parseMoment');
 
 const limitPattern = /^(([0-9]*h [0-9]*m)|([0-9]*h)|([0-9]*m))$/gi;
 const exactTimePattern = /^([0-9][0-9]|[0-9]):([0-9][0-9]|[0-9])$|^([0-9][0-9]|[0-9]):([0-9][0-9]|[0-9])( (am|pm)|(am|pm))$/gi;
@@ -28,17 +29,17 @@ module.exports = async (ctx) => {
             firesTime = moment().add(hours, 'hours').add(minutes, 'minutes');
 
         } else if (reminderTime.match(exactTimePattern)) {
-            firesTime = eParser(reminderTime, 'et');
-            return ctx.reply(`${reminderTime} match et`);
+            const fireData = eParser(reminderTime, 'et');
+            return ctx.reply(`${reminderTime} match et. ${mParser(fireData)}`);
         } else if (reminderTime.match(exactDatePattern)) {
-            firesTime = eParser(reminderTime, 'ed');
-            return ctx.reply(`${reminderTime} match ed`);
+            const fireData = eParser(reminderTime, 'ed');
+            return ctx.reply(`${reminderTime} match ed. ${mParser(fireData)}`);
         } else if (reminderTime.match(exactTimeDatePattern)) {
-            firesTime = eParser(reminderTime, 'etd');
-            return ctx.reply(`${reminderTime} match etd`);
+            const fireData = eParser(reminderTime, 'etd');
+            return ctx.reply(`${reminderTime} match etd. ${mParser(fireData)}`);
         } else if (reminderTime.match(exactDateTimePattern)) {
-            firesTime = eParser(reminderTime, 'edt');
-            return ctx.reply(`${reminderTime} match edt`);
+            const fireData = eParser(reminderTime, 'edt');
+            return ctx.reply(`${reminderTime} match edt. ${mParser(fireData)}`);
         } else {
             return ctx.reply(`${reminderTime} did not match any time pattern`);
         }
