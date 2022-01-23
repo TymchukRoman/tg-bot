@@ -18,38 +18,49 @@ module.exports = async (ctx) => {
             ctx.reply(`Use command /reminder with arguments.\nExample:\n/reminder 2h 10m`);
             return true;
         }
-        let firesTime, hours, minutes;
+        let firesTime, type;
 
         if (reminderTime.match(limitPattern)) {
 
             const [hours, minutes] = lParser(reminderTime);
+            type = "time limit";
             if (hours > 10000 || (hours === 10000 && minutes > 0)) {
                 return ctx.reply(`Sorry, cant set reminder after ${hours} hours, ${minutes} minutes. 10000 hours is owr maximum(`);
             }
             firesTime = moment().add(hours, 'hours').add(minutes, 'minutes');
 
         } else if (reminderTime.match(exactTimePattern)) {
-            const fireData = eParser(reminderTime, 'et');
-            return ctx.reply(`${reminderTime} match et. ${mParser(fireData)}`);
+
+            type = "exact time et";
+            firesTime = mParser(eParser(reminderTime, 'et'));
+
         } else if (reminderTime.match(exactDatePattern)) {
-            const fireData = eParser(reminderTime, 'ed');
-            return ctx.reply(`${reminderTime} match ed. ${mParser(fireData)}`);
+
+            type = "exact time ed";
+            firesTime = mParser(eParser(reminderTime, 'ed'));
+
         } else if (reminderTime.match(exactTimeDatePattern)) {
-            const fireData = eParser(reminderTime, 'etd');
-            return ctx.reply(`${reminderTime} match etd. ${mParser(fireData)}`);
+
+            type = "exact time etd";
+            firesTime = mParser(eParser(reminderTime, 'etd'));
+
         } else if (reminderTime.match(exactDateTimePattern)) {
-            const fireData = eParser(reminderTime, 'edt');
-            return ctx.reply(`${reminderTime} match edt. ${mParser(fireData)}`);
+
+            type = "exact time edt";
+            firesTime = mParser(eParser(reminderTime, 'edt'));
+
         } else {
             return ctx.reply(`${reminderTime} did not match any time pattern`);
         }
+        
         const chatType = ctx.update.message.chat.type;
         const chatId = ctx.update.message.chat.id;
         const userId = ctx.update.message.from.id;
         const username = ctx.update.message.from.username;
-        const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, "time limit");
+        const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type);
         if (response) {
-            ctx.replyWithMarkdown(`You want to set reminder after ${hours} hours, ${minutes} minutes. Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
+            console.log(firesTime);
+            ctx.replyWithMarkdown(`Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
         } else {
             ctx.reply("There is some errors occured when creating a reminder...");
         }
