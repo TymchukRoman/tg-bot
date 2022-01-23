@@ -4,8 +4,9 @@ const parser = (reminderTime, type) => {
             let [hour, minute] = reminderTime.split(':');
             let dayTime = null;
             if (minute.toLowerCase().includes('am') || minute.toLowerCase().includes('pm')) {
+                console.log(minute);
                 if (minute.includes(' ')) {
-                    [minute, dayTime] = minute.split[' '];
+                    [minute, dayTime] = minute.split(' ');
                 } else {
                     dayTime = minute.length == 4 ? minute.substring(2, 4) : minute.substring(1, 3);
                     minute = minute.length == 4 ? minute.substring(0, 2) : minute.substring(0, 1);
