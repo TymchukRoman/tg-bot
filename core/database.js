@@ -1,4 +1,5 @@
 const Reminder = require('../models/reminder');
+const User = require('../models/user');
 const moment = require('moment');
 const logger = require('./logger');
 
@@ -59,6 +60,35 @@ class DB {
         } catch (err) {
             logger.log('Cannot fire reminder', 'system', 'ERR', err);
             return [];
+        }
+    }
+
+    static async createUser({ id, is_bot, first_name, last_name, username, language_code }) {
+        try {
+            const user = new User({
+                id: String(id),
+                is_bot,
+                first_name: first_name ? first_name : "empty",
+                last_name: last_name ? last_name : "empty",
+                username,
+                language_code,
+                registration_date: moment(),
+            });
+            const saved = await user.save();
+            logger.log('New user registered', id, 'ERR', { userId: saved._id });
+            return true;
+        } catch (err) {
+            logger.log('Cannot save user', 'system', 'ERR', { err, id, is_bot, first_name, last_name, username, language_code });
+            return [];
+        }
+    }
+
+    static async getUser(userId) {
+        try {
+            return await User.findOne({ id: String(userId) }).clone();
+        } catch (err) {
+            logger.log('Cannot ger user by id', 'system', 'ERR', { err, id });
+            return false;
         }
     }
 }
