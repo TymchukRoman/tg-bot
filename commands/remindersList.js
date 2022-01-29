@@ -4,8 +4,14 @@ const moment = require('moment');
 module.exports = async (ctx) => {
 
     const chatId = ctx.update.message.chat.id;
+    const params = ctx.update.message.text.split("/list").filter((param) => param.trim() !== "");
+    let activeOnly = true;
 
-    const reminders = await DB.getByChatId(chatId);
+    if (Array.isArray(params) && params.some((param) => param.trim().toLowerCase() === "a")) {
+        activeOnly = false;
+    }
+
+    const reminders = await DB.getByChatId(chatId, activeOnly);
 
     const message = reminders.map(reminder => {
         return `${reminder.username} - ${reminder.userInput}\nFires time - ${moment(reminder.firesTime, "ddd MMM DD YYYY hh:mm:ss a ZZ").format("ddd, MMM DD YYYY, HH:mm")}`

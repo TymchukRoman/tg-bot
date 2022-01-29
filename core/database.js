@@ -56,9 +56,10 @@ class DB {
         }
     }
 
-    static async getByChatId(chatID) {
+    static async getByChatId(chatID, activeOnly) {
         try {
-            return await Reminder.find({ chatID }).clone();
+            const searchParams = activeOnly ? { chatID, isActive: true } : { chatID };
+            return await Reminder.find(searchParams).clone();
         } catch (err) {
             logger.log('Cannot fire reminder', 'system', 'ERR', err);
             return [];
