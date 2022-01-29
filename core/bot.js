@@ -31,8 +31,13 @@ bot.command('ping', (ctx) => {
 });
 
 bot.command('reminder', async (ctx) => {
-    commands.reminder(ctx);
+    commands.reminder(ctx, "/reminder");
 });
+
+bot.command('r', async (ctx) => {
+    commands.reminder(ctx, "/r");
+});
+
 
 bot.command('list', (ctx) => {
     commands.list(ctx);
