@@ -8,6 +8,9 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.start((ctx) => {
     ctx.reply(`Welcome! ${ctx.update.message.from.username} Use /help for more info.`);
+    if (ctx.update.message.chat.type === 'group') {
+        DB.createGroup(ctx.update.message.chat);
+    }
     DB.createUser(ctx.update.message.from);
 });
 
@@ -31,8 +34,13 @@ bot.command('ping', (ctx) => {
 });
 
 bot.command('reminder', async (ctx) => {
-    commands.reminder(ctx);
+    commands.reminder(ctx, "/reminder");
 });
+
+bot.command('r', async (ctx) => {
+    commands.reminder(ctx, "/r");
+});
+
 
 bot.command('list', (ctx) => {
     commands.list(ctx);

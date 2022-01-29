@@ -8,9 +8,15 @@ const patterns = require('../constants/reminderPatterns')
 
 const { limitPattern, exactTimePattern, exactDatePattern, exactTimeDatePattern, exactDateTimePattern } = patterns;
 
-module.exports = async (ctx) => {
+module.exports = async (ctx, cmdsep) => {
     try {
-        let reminderData = ctx.update.message.text.split("/reminder ")[1];
+        let reminderData = ctx.update.message.text.split(`${cmdsep} `)[1];
+        
+        if (!reminderData) {
+            ctx.reply(`Use command ${cmdsep} with arguments.\nExample:\n${cmdsep} 2h 10m`);
+            return true;
+        }
+
         console.log(reminderData);
         let reminderTime, firesTime, type;
 
@@ -22,7 +28,7 @@ module.exports = async (ctx) => {
         }
 
         if (!reminderTime) {
-            ctx.reply(`Use command /reminder with arguments.\nExample:\n/reminder 2h 10m`);
+            ctx.reply(`Use command ${cmdsep} with arguments.\nExample:\n${cmdsep} 2h 10m`);
             return true;
         }
 
