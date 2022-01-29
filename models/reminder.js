@@ -38,7 +38,17 @@ const reminderSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false,
-    }
+    },
+    title: {
+        type: String,
+        required: true,
+        default: "New reminder",
+    },
+    description: {
+        type: String,
+        default: "",
+    },
+
 }, { collection: 'reminders' })
 
 module.exports = mongoose.model("reminder", reminderSchema);
