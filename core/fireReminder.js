@@ -4,7 +4,7 @@ const Telegraf = require('telegraf');
 
 module.exports = async (bot, reminderId) => {
     const reminder = await DB.getReminder(reminderId);
-    bot.telegram.sendMessage(reminder.chatID, "You reminder is here!");
+    bot.telegram.sendMessage(reminder.chatID, `${reminder.title} is here! ${reminder.description}`);
     DB.fireReminder(reminderId);
     return true;
 }

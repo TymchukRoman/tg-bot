@@ -36,10 +36,10 @@ bot.command('reminder', async (ctx) => {
 
 bot.command('list', (ctx) => {
     commands.list(ctx);
-})
+});
 
 bot.command('help', (ctx) => {
     commands.help(ctx);
-})
+});
 
 module.exports = bot;

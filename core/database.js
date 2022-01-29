@@ -4,7 +4,7 @@ const moment = require('moment');
 const logger = require('./logger');
 
 class DB {
-    static async createReminder(userID, chatID, firesTime, chatType, userInput, username, type) {
+    static async createReminder(userID, chatID, firesTime, chatType, userInput, username, type, title, description) {
         try {
             const reminder = new Reminder({
                 userID,
@@ -15,6 +15,8 @@ class DB {
                 userInput,
                 username,
                 type,
+                title,
+                description
             });
             const saved = await reminder.save();
             logger.log('Reminder created', userID, 'ERR', { reminderId: saved._id });

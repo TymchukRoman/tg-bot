@@ -13,7 +13,15 @@ const exactDateTimePattern = /^([0-9][0-9]|[0-9])(.|\/)([0-9][0-9]|[0-9])(.|\/)(
 
 module.exports = async (ctx) => {
     try {
-        const reminderTime = ctx.update.message.text.split("/reminder ")[1];
+        let reminderData = ctx.update.message.text.split("/reminder ")[1];
+        console.log(reminderData);
+        let reminderTime;
+        if (reminderData.includes(".")) {
+            reminderData = reminderData.split(".");
+            reminderTime = reminderData[0].trim();
+        } else {
+            reminderTime = reminderData.trim();
+        }
         if (!reminderTime) {
             ctx.reply(`Use command /reminder with arguments.\nExample:\n/reminder 2h 10m`);
             return true;
@@ -52,15 +60,17 @@ module.exports = async (ctx) => {
         } else {
             return ctx.reply(`${reminderTime} did not match any time pattern`);
         }
-        
+
+        const title = Array.isArray(reminderData) && reminderData[1] ? reminderData[1].trim() : "New reminder";
+        const description =  Array.isArray(reminderData) && reminderData[2] ? reminderData[2].trim() : "";
         const chatType = ctx.update.message.chat.type;
         const chatId = ctx.update.message.chat.id;
         const userId = ctx.update.message.from.id;
         const username = ctx.update.message.from.username;
-        const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type);
+        const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type, title, description);
         if (response) {
             console.log(firesTime);
-            ctx.replyWithMarkdown(`Reminder fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
+            ctx.replyWithMarkdown(`${title}, ${description ? description + "," : ""} fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
         } else {
             ctx.reply("There is some errors occured when creating a reminder...");
         }
