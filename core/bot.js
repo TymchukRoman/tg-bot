@@ -8,6 +8,9 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.start((ctx) => {
     ctx.reply(`Welcome! ${ctx.update.message.from.username} Use /help for more info.`);
+    if (ctx.update.message.chat.type === 'group') {
+        DB.createGroup(ctx.update.message.chat);
+    }
     DB.createUser(ctx.update.message.from);
 });
 

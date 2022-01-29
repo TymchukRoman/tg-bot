@@ -1,5 +1,6 @@
 const Reminder = require('../models/reminder');
 const User = require('../models/user');
+const Group = require('../models/group');
 const moment = require('moment');
 const logger = require('./logger');
 
@@ -19,7 +20,7 @@ class DB {
                 description
             });
             const saved = await reminder.save();
-            logger.log('Reminder created', userID, 'ERR', { reminderId: saved._id });
+            logger.log('Reminder created', userID, 'INFO', { reminderId: saved._id });
             return true;
         } catch (err) {
             logger.log('Reminder creation error', userID, 'ERR', err);
@@ -84,6 +85,12 @@ class DB {
 
     static async createUser({ id, is_bot, first_name, last_name, username, language_code }) {
         try {
+            
+            const isCreated = await User.findOne({ id: String(id) }).clone();
+            if(isCreated) {
+                return false;
+            }
+
             const user = new User({
                 id: String(id),
                 is_bot,
@@ -94,7 +101,7 @@ class DB {
                 registration_date: moment(),
             });
             const saved = await user.save();
-            logger.log('New user registered', id, 'ERR', { userId: saved._id });
+            logger.log('New user registered', id, 'INFO', { userId: saved._id });
             return true;
         } catch (err) {
             logger.log('Cannot save user', 'system', 'ERR', { err, id, is_bot, first_name, last_name, username, language_code });
@@ -108,6 +115,38 @@ class DB {
         } catch (err) {
             logger.log('Cannot ger user by id', 'system', 'ERR', { err, id });
             return false;
+        }
+    }
+
+    static async getGroup(groupId) {
+        try {
+            return await Group.findOne({ id: String(groupId) }).clone();
+        } catch (err) {
+            logger.log('Cannot ger user by id', 'system', 'ERR', { err, id });
+            return false;
+        }
+    }
+
+    static async createGroup({ id, title }) {
+        try {
+
+            const isCreated = await Group.findOne({ id: String(id) }).clone();
+            if(isCreated) {
+                return false;
+            }
+
+            const group = new Group({
+                id: String(id),
+                title,
+                reminders: [],
+                registration_date: moment(),
+            });
+            const saved = await group.save();
+            logger.log('New group registered', id, 'INFO', { userId: saved._id });
+            return true;
+        } catch (err) {
+            logger.log('Cannot save group', 'system', 'ERR', { err, id, title });
+            return [];
         }
     }
 }
