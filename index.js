@@ -22,6 +22,7 @@ const app = new appCreator(moment(), bot);
 try {
     app.start();
     app.createTask();
+    app.createCleaner();
 } catch (err) {
     logger.log('App starting failed', "system", 'ERR', err);
 }

@@ -36,6 +36,15 @@ class DB {
         }
     }
 
+    static async getUnactive() {
+        try {
+            return await Reminder.find({ isActive: false }).clone();
+        } catch (err) {
+            logger.log('Cant get unactive reminders', 'system', 'ERR', err);
+            return [];
+        }
+    }
+
     static async getReminder(reminderId) {
         try {
             return await Reminder.findOne({ _id: reminderId }).clone();
@@ -51,8 +60,15 @@ class DB {
                 $set: { isActive: false }
             }).clone();
         } catch (err) {
-            logger.log('Cannot fire reminder', 'system', 'ERR', err);
-            return false;
+            return logger.log('Cannot fire reminder', 'system', 'ERR', err);
+        }
+    }
+
+    static async removeReminder(reminderId) {
+        try {
+            return await Reminder.deleteOne({ _id: reminderId }).clone();
+        } catch (err) {
+            return logger.log('Cannot remove reminder', 'system', 'ERR', err);
         }
     }
 
