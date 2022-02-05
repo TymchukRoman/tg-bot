@@ -4,7 +4,8 @@ const logger = require('../core/logger');
 const limitParser = require('./parsers/limitParser');
 const exactParser = require('./parsers/exactParser');
 const momentParser = require('./parsers/parseMoment');
-const patterns = require('../constants/reminderPatterns')
+const patterns = require('../constants/reminderPatterns');
+const exactValidator = require('./validators/exactValidator');
 
 const { limitPattern, exactTimePattern, exactDatePattern, exactTimeDatePattern, exactDateTimePattern } = patterns;
 
@@ -77,6 +78,10 @@ module.exports = async (ctx, cmdsep) => {
         if (type !== 'time limit') {
             const localTime = moment.tz(firesTime.format().split('+')[0], user.timeZone);
             firesTime = localTime.clone().tz("Etc/GMT+0");
+            firesTime = exactValidator(firesTime, type);
+            if (!firesTime) {
+                return ctx.reply("Reminder time cannot be in past");
+            }
         }
 
         const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type, title, description);
