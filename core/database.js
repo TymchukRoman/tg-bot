@@ -5,19 +5,20 @@ const moment = require('moment');
 const logger = require('./logger');
 
 class DB {
-    static async createReminder(userID, chatID, firesTime, chatType, userInput, username, type, title, description) {
+    static async createReminder(userID, chatID, firesTime, chatType, userInput, username, type, title, description, cycle, isCycling = false) {
         try {
             const reminder = new Reminder({
                 userID,
                 chatID,
-                firesTime: moment(firesTime).set('second', 0).format("ddd MMM DD YYYY hh:mm:ss a ZZ"),
+                firesTime: isCycling ? firesTime : moment(firesTime).set('second', 0).format("ddd MMM DD YYYY hh:mm:ss a ZZ"),
                 created: moment(),
                 chatType,
                 userInput,
                 username,
                 type,
                 title,
-                description
+                description,
+                cycle: isCycling ? cycle : null
             });
             const saved = await reminder.save();
             logger.log('Reminder created', userID, 'INFO', { reminderId: saved._id });

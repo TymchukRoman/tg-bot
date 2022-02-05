@@ -48,7 +48,10 @@ const reminderSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
-
+    cycle: {
+        type: Object,
+        required: false,
+    }
 }, { collection: 'reminders' })
 
 module.exports = mongoose.model("reminder", reminderSchema);

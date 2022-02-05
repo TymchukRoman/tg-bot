@@ -53,6 +53,10 @@ bot.command('r', async (ctx) => {
     commands.reminder(ctx, "/r");
 });
 
+bot.command('c', (ctx) => {
+    commands.cycling(ctx);
+});
+
 bot.command('list', (ctx) => {
     commands.list(ctx);
 });
