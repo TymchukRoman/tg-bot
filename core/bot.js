@@ -1,6 +1,8 @@
-const { Telegraf } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf')
 const commands = require('./commandsRouter.js');
 const DB = require('./database');
+const moment = require('moment');
+
 
 const checkUser = require('./middleware/checkUser');
 
@@ -15,8 +17,10 @@ bot.start((ctx) => {
 });
 
 bot.use(checkUser());
+bot.use(Telegraf.log());
 
-//Use to create reminder from patterns in group chats
+
+
 bot.on('inline_query', async (ctx) => {
     const patterns = [
         { type: 'article', id: 1, title: 'Reminder for 2m', input_message_content: { message_text: '/reminder 2m' } },
@@ -25,8 +29,16 @@ bot.on('inline_query', async (ctx) => {
         { type: 'article', id: 4, title: 'Reminder for 1h', input_message_content: { message_text: '/reminder 1h' } },
         { type: 'article', id: 5, title: 'Reminder for 2h', input_message_content: { message_text: '/reminder 2h' } }
     ].filter((item) => item.title.includes(ctx.inlineQuery.query));
-
+    
     ctx.answerInlineQuery(patterns);
+});
+
+bot.command('setTimezone', async (ctx) => {
+    commands.timeZone(ctx);
+});
+
+bot.command('stz', ctx => {
+    commands.setTimezone(ctx);
 });
 
 bot.command('ping', (ctx) => {
@@ -40,7 +52,6 @@ bot.command('reminder', async (ctx) => {
 bot.command('r', async (ctx) => {
     commands.reminder(ctx, "/r");
 });
-
 
 bot.command('list', (ctx) => {
     commands.list(ctx);

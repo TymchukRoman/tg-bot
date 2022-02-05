@@ -85,9 +85,8 @@ class DB {
 
     static async createUser({ id, is_bot, first_name, last_name, username, language_code }) {
         try {
-            
             const isCreated = await User.findOne({ id: String(id) }).clone();
-            if(isCreated) {
+            if (isCreated) {
                 return false;
             }
 
@@ -127,11 +126,21 @@ class DB {
         }
     }
 
+    static async setTimezone(userId, timeZone) {
+        try {
+            return await User.findOneAndUpdate({ id: String(userId) }, {
+                $set: { timeZone }
+            }).clone();
+        } catch (err) {
+            logger.log('Cannot set user timeZone', 'system', 'ERR', { err, userId });
+            return false;
+        }
+    }
+
     static async createGroup({ id, title }) {
         try {
-
             const isCreated = await Group.findOne({ id: String(id) }).clone();
-            if(isCreated) {
+            if (isCreated) {
                 return false;
             }
 
