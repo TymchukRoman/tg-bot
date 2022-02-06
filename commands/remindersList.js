@@ -13,8 +13,10 @@ module.exports = async (ctx) => {
 
     const reminders = await DB.getByChatId(chatId, activeOnly);
 
+    const user = await DB.getUser(ctx.update.message.from.id);
+
     const message = reminders.map(reminder => {
-        return `${reminder.username} - ${reminder.userInput}\nFires time - ${moment(reminder.firesTime, "ddd MMM DD YYYY hh:mm:ss a ZZ").format("ddd, MMM DD YYYY, HH:mm")}`
+        return `${reminder.username} - ${reminder.userInput}\nFires time - ${moment(reminder.firesTime, "ddd MMM DD YYYY hh:mm:ss a ZZ").tz(user.timeZone).format("ddd, MMM DD YYYY, HH:mm")}`
     }).join(`\n\n`);
 
     ctx.reply(`Got ${reminders.length} reminders!\n${message}`);

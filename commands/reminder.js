@@ -4,14 +4,15 @@ const logger = require('../core/logger');
 const limitParser = require('./parsers/limitParser');
 const exactParser = require('./parsers/exactParser');
 const momentParser = require('./parsers/parseMoment');
-const patterns = require('../constants/reminderPatterns')
+const patterns = require('../constants/reminderPatterns');
+const exactValidator = require('./validators/exactValidator');
 
 const { limitPattern, exactTimePattern, exactDatePattern, exactTimeDatePattern, exactDateTimePattern } = patterns;
 
 module.exports = async (ctx, cmdsep) => {
     try {
         let reminderData = ctx.update.message.text.split(`${cmdsep} `)[1];
-        
+
         if (!reminderData) {
             ctx.reply(`Use command ${cmdsep} with arguments.\nExample:\n${cmdsep} 2h 10m`);
             return true;
@@ -71,10 +72,21 @@ module.exports = async (ctx, cmdsep) => {
         const chatId = ctx.update.message.chat.id;
         const userId = ctx.update.message.from.id;
         const username = ctx.update.message.from.username;
+
+        const user = await DB.getUser(userId);
+
+        if (type !== 'time limit') {
+            const localTime = moment.tz(firesTime.format().split('+')[0], user.timeZone);
+            firesTime = localTime.clone().tz("Etc/GMT+0");
+            firesTime = exactValidator(firesTime, type);
+            if (!firesTime) {
+                return ctx.reply("Reminder time cannot be in past");
+            }
+        }
+
         const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type, title, description);
         if (response) {
-            console.log(firesTime);
-            ctx.replyWithMarkdown(`${title}, ${description ? description + "," : ""} fires time - *${firesTime.format("dddd, MMM DD YYYY, HH:mm")}*`);
+            ctx.replyWithMarkdown(`${title}, ${description ? description + "," : ""} fires time - *${firesTime.tz(user.timeZone).format("dddd, MMM DD YYYY, HH:mm")}*`);
         } else {
             ctx.reply("There is some errors occured when creating a reminder...");
         }
