@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema({
     registration_date: {
         type: String,
         required: true,
+    },
+    timeZone: {
+        type: String,
+        required: true,
+        default: "Etc/GMT+0"
     }
 }, { collection: 'users' })
 
