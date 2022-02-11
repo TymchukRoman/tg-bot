@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema({
     timeZone: {
         type: String,
         required: true,
-        default: "Etc/GMT+0"
+        default: "Etc/GMT+0",
+    },
+    reminders: {
+        type: Array,
+        required: true,
+        default: [],
     }
 }, { collection: 'users' })
 
