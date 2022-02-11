@@ -45,6 +45,7 @@ module.exports = async (ctx) => {
 
         const response = await DB.createReminder(userId, chatId, cycle.time, chatType, reminderData, username, type, title, description, cycle, true);
         if (response) {
+            if (response === 500) return ctx.replyWithMarkdown("You reach limit of active reminders)");
             ctx.replyWithMarkdown(`${title}, ${description ? description + "," : ""} fires - *${cycleData}*`);
         } else {
             ctx.reply("There is some errors occured when creating a reminder...");
