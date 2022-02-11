@@ -21,6 +21,11 @@ class DB {
                 cycle: isCycling ? cycle : null
             });
             const saved = await reminder.save();
+            const user = await DB.getUser(userID);
+            const reminders = [ ...user.reminders, saved._id ];
+            await User.findOneAndUpdate({ id: String(userID) }, {
+                $set: { reminders }
+            }).clone();
             logger.log('Reminder created', userID, 'INFO', { reminderId: saved._id });
             return true;
         } catch (err) {
