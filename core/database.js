@@ -7,6 +7,11 @@ const logger = require('./logger');
 class DB {
     static async createReminder(userID, chatID, firesTime, chatType, userInput, username, type, title, description, cycle, isCycling = false) {
         try {
+            const remindersLimit = await DB.getUserReminders(userID);
+            if (remindersLimit.length >= 5) {
+                return 500;
+            }
+
             const reminder = new Reminder({
                 userID,
                 chatID,
@@ -22,7 +27,7 @@ class DB {
             });
             const saved = await reminder.save();
             const user = await DB.getUser(userID);
-            const reminders = [ ...user.reminders, saved._id ];
+            const reminders = [...user.reminders, saved._id];
             await User.findOneAndUpdate({ id: String(userID) }, {
                 $set: { reminders }
             }).clone();
@@ -55,6 +60,15 @@ class DB {
     static async getReminder(reminderId) {
         try {
             return await Reminder.findOne({ _id: reminderId }).clone();
+        } catch (err) {
+            logger.log('Cannot ger reminder by id', 'system', 'ERR', err);
+            return false;
+        }
+    }
+
+    static async getUserReminders(userID) {
+        try {
+            return await Reminder.find({ userID, isActive: true }).clone();
         } catch (err) {
             logger.log('Cannot ger reminder by id', 'system', 'ERR', err);
             return false;

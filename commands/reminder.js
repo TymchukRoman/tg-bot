@@ -18,7 +18,6 @@ module.exports = async (ctx, cmdsep) => {
             return true;
         }
 
-        console.log(reminderData);
         let reminderTime, firesTime, type;
 
         if (reminderData.includes(".")) {
@@ -86,6 +85,7 @@ module.exports = async (ctx, cmdsep) => {
 
         const response = await DB.createReminder(userId, chatId, firesTime, chatType, reminderTime, username, type, title, description);
         if (response) {
+            if (response === 500) return ctx.replyWithMarkdown("You reach limit of active reminders)");
             ctx.replyWithMarkdown(`${title}, ${description ? description + "," : ""} fires time - *${firesTime.tz(user.timeZone).format("dddd, MMM DD YYYY, HH:mm")}*`);
         } else {
             ctx.reply("There is some errors occured when creating a reminder...");
